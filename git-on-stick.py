@@ -1,12 +1,14 @@
+from sys import argv, platform
+import os, getpass
 
-def gos_init:
+def s_init:
     return
 
-def gos_clone:
+def s_clone:
     return
 
-def gos_push:
+def s_push:
     return
 
-def gos_pull:
+def s_pull:
     return
