@@ -27,7 +27,7 @@ def getData():
     if path.exists(wholeSPath):
         data['stickPath'] = argv[3]
     else:
-        print('Directory Can NOT Found! ' + argv[3])
+        print('Source Directory Can NOT Found! ' + argv[3])
         response = input('Do you want to create new directory? [Y,n]: ')
         if response.lower() == 'y':
             makedirs(wholeSPath)
@@ -40,7 +40,7 @@ def getData():
         if path.exists(argv[4]):
             data['targetPath'] = argv[4]
         else:
-            print('Directory Can NOT Found! ' + argv[4])
+            print('Target Directory Can NOT Found! ' + argv[4])
             response = input('Do you want to create new directory? [Y,n]: ')
             if response.lower() == 'y':
                 makedirs(argv[4])
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             raise Exception('Incorrect Function Argument!')
 
         data = getData()
-        
+        print(data)
     except Exception as err:
         print(err)
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     finally:
         print('--END OF LINE--')
 
-# gos init Liquid /Repo/folder [target]
-# gos clone Liquid /Repo/folder [target]
-# gos pull Liquid /Repo/folder
+# gos init USB_LABEL /Repo/Folder [target]
+# gos clone USB_LABEL /Repo/Folder [target]
+# gos pull USB_LABEL /Repo/Folder
 # gos push 
