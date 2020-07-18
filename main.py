@@ -20,7 +20,10 @@ def getData():
         else:
             raise Exception('USB Label Can NOT Found!')
     
-    wholeSPath = data['usbLabelPath'] + argv[3]
+    if not(argv[3][1] == '/'):
+        wholeSPath = data['usbLabelPath'] + '/' + argv[3]
+    else:
+        wholeSPath = data['usbLabelPath'] + argv[3]
     if path.exists(wholeSPath):
         data['stickPath'] = argv[3]
     else:
@@ -41,7 +44,7 @@ def getData():
             response = input('Do you want to create new directory? [Y,n]: ')
             if response.lower() == 'y':
                 makedirs(argv[4])
-                data['stickPath'] = argv[4]
+                data['targetPath'] = argv[4]
             else:
                 raise Exception('Process Terminated By User')
     
