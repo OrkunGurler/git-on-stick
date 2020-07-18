@@ -1,45 +1,61 @@
-from sys import platform, argv, exit
-from gos import *
+from sys import argv, exc_info
+from os import name, path
+import gos
 
-def genData():
-    cList = {}
-    arguments = argv
-    argsCount = len(argv)
-    if not((argsCount == 1) or (argsCount > 5)):
-        for i in range(1, argsCount):
-            argSplitted = arguments[i].split('=')
-            if not(argSplitted):
-                cList[argSplitted[0]] = argSplitted[1]
-    else:
-        print('Missing or Much Arguments!')
-        exit()
-
-    platformList = {'AIX': 'aix', 'FreeBSD': 'freebsd', 'Linux': 'linux', 'Windows': 'win32', 'Windows/Cygwin': 'cygwin', 'macOS': 'darwin'}
-    platformName = platform
-    flag = 1
-    for value in platformList.values():
-        if platformName == value:
-            cList['--platform'] = platformName
-            flag = 0
-            break
-    if flag:
-        print('Unfortunately Your Platform Is NOT Supported!')
-    return cList
-
-def getGosFunc(garg):
+def getGosFunc(callFunc, data):
     switcher = {
-        'clone':s_clone(),
-        'init':s_init(),
-        'pull':s_pull(),
-        'push':s_push()
+        'init': gos.s_init,
+        'clone': gos.s_clone,
+        'push': gos.s_push,
+        'pull': gos.s_pull
     }
-    return switcher.get(garg)
+    return switcher[callFunc](data)
 
-def main(data):
-    getGosFunc(argv[1])
+def main(requestedFunc, data):
+    getGosFunc(requestedFunc, data)
     return 1
     
 
 if __name__ == "__main__":
-    data = genData()
-    main(data)
+    try:
+        gosFuncList = dir(gos)
+        requestedFunc = argv[1]
+        if not(('s_' + requestedFunc) in gosFuncList):
+            raise Exception('Incorrect Function Argument!')
+
+        getData = {}
+
+        osName = name
+        getData['osName'] = osName
+
+        userPath = path.expanduser('~')
+        userName = path.split(userPath)[-1]
+        getData['userName'] = userName
+
+        getData['usbLabel'] = argv[2]
+        # TODO: check label path if its exists else raise
+
+        getData['stickPath'] = argv[3]
+        # TODO: check stick path if its exists else raise
+
+        if requestedFunc == 'clone' and len(argv) == 5:
+            getData['targetPath'] = argv[4]
+            # TODO: check target path if its exists else raise
+
+    except Exception as err:
+        print(err)
+
+    except:
+        print("Unexpected error:", exc_info()[0])
+        raise
+
+    else:
+        main(requestedFunc, getData)
+
+    finally:
+        print('--END OF LINE--')
+
+# gos init Liquid /Repo/folder
+# gos clone Liquid /Repo/folder [target]
+# gos pull Liquid /Repo/folder
+# gos push 
