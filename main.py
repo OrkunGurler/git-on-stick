@@ -1,13 +1,10 @@
-import os
-import sys
-import platform
-import getpass
+from sys import platform, argv, exit
 from gos import *
 
 def genData():
     cList = {}
-    arguments = sys.argv
-    argsCount = len(sys.argv)
+    arguments = argv
+    argsCount = len(argv)
     if not((argsCount == 1) or (argsCount > 5)):
         for i in range(1, argsCount):
             argSplitted = arguments[i].split('=')
@@ -15,10 +12,10 @@ def genData():
                 cList[argSplitted[0]] = argSplitted[1]
     else:
         print('Missing or Much Arguments!')
-        sys.exit()
+        exit()
 
     platformList = {'AIX': 'aix', 'FreeBSD': 'freebsd', 'Linux': 'linux', 'Windows': 'win32', 'Windows/Cygwin': 'cygwin', 'macOS': 'darwin'}
-    platformName = sys.platform
+    platformName = platform
     flag = 1
     for value in platformList.values():
         if platformName == value:
@@ -29,7 +26,7 @@ def genData():
         print('Unfortunately Your Platform Is NOT Supported!')
     return cList
 
-def gosfunc(garg):
+def getGosFunc(garg):
     switcher = {
         'clone':s_clone(),
         'init':s_init(),
@@ -39,7 +36,7 @@ def gosfunc(garg):
     return switcher.get(garg)
 
 def main(data):
-    gosfunc(sys.argv[1])
+    getGosFunc(argv[1])
     return 1
     
 
