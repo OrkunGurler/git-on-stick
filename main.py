@@ -1,6 +1,6 @@
 from sys import argv, exc_info
-from os import name, path
-import gos
+from os import path, uname, makedirs
+from gos import s_init, s_clone, s_push, s_pull
 
 def getData():
     data = {}
@@ -9,26 +9,50 @@ def getData():
     userName = path.split(userPath)[-1]
     data['userName'] = userName
 
-    data['osName'] = name
+    os = uname()
+    data['osName'] = os.sysname
 
-    data['usbLabel'] = argv[2]
-    # TODO: check label path if its exists else raise
+    if data['osName'] == 'Linux':
+        labelPath = ('/run' if 'arch' in os.release else '') + '/media/' + data['userName'] + '/' + argv[2]
+        if path.exists(labelPath):
+            data['usbLabel'] =  argv[2]
+            data['usbLabelPath'] = labelPath       
+        else:
+            raise Exception('USB Label Can NOT Found!')
+    
+    wholeSPath = data['usbLabelPath'] + argv[3]
+    if path.exists(wholeSPath):
+        data['stickPath'] = argv[3]
+    else:
+        print('Directory Can NOT Found! ' + argv[3])
+        response = input('Do you want to create new directory? [Y,n]: ')
+        if response.lower() == 'y':
+            makedirs(wholeSPath)
+            data['stickPath'] = argv[3]
+        else:
+            raise Exception('Process Terminated By User')
 
-    data['stickPath'] = argv[3]
-    # TODO: check stick path if its exists else raise
 
-    if requestedFunc == 'clone' and len(argv) == 5:
-        data['targetPath'] = argv[4]
-        # TODO: check target path if its exists else raise
+    if (requestedFunc == 'clone' or requestedFunc == 'init') and len(argv) == 5:
+        if path.exists(argv[4]):
+            data['targetPath'] = argv[4]
+        else:
+            print('Directory Can NOT Found! ' + argv[4])
+            response = input('Do you want to create new directory? [Y,n]: ')
+            if response.lower() == 'y':
+                makedirs(argv[4])
+                data['stickPath'] = argv[4]
+            else:
+                raise Exception('Process Terminated By User')
     
     return data
 
 def getGosFunc(callFunc, data):
     switcher = {
-        'init': gos.s_init,
-        'clone': gos.s_clone,
-        'push': gos.s_push,
-        'pull': gos.s_pull
+        'init': s_init,
+        'clone': s_clone,
+        'push': s_push,
+        'pull': s_pull
     }
     return switcher[callFunc](data)
 
@@ -37,9 +61,10 @@ def main(requestedFunc, data):
 
 if __name__ == "__main__":
     try:
-        gosFuncList = dir(gos)
-        requestedFunc = argv[1]
-        if not(('s_' + requestedFunc) in gosFuncList):
+        gosFuncList = ['init', 'clone', 'push', 'pull']
+        if argv[1] in gosFuncList:
+            requestedFunc = argv[1]
+        else:
             raise Exception('Incorrect Function Argument!')
 
         data = getData()
@@ -57,7 +82,7 @@ if __name__ == "__main__":
     finally:
         print('--END OF LINE--')
 
-# gos init Liquid /Repo/folder
+# gos init Liquid /Repo/folder [target]
 # gos clone Liquid /Repo/folder [target]
 # gos pull Liquid /Repo/folder
 # gos push 
