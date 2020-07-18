@@ -2,6 +2,27 @@ from sys import argv, exc_info
 from os import name, path
 import gos
 
+def getData():
+    data = {}
+
+    userPath = path.expanduser('~')
+    userName = path.split(userPath)[-1]
+    data['userName'] = userName
+
+    data['osName'] = name
+
+    data['usbLabel'] = argv[2]
+    # TODO: check label path if its exists else raise
+
+    data['stickPath'] = argv[3]
+    # TODO: check stick path if its exists else raise
+
+    if requestedFunc == 'clone' and len(argv) == 5:
+        data['targetPath'] = argv[4]
+        # TODO: check target path if its exists else raise
+    
+    return data
+
 def getGosFunc(callFunc, data):
     switcher = {
         'init': gos.s_init,
@@ -13,7 +34,7 @@ def getGosFunc(callFunc, data):
 
 def main(requestedFunc, data):
     return getGosFunc(requestedFunc, data)
-    
+
 if __name__ == "__main__":
     try:
         gosFuncList = dir(gos)
@@ -21,25 +42,8 @@ if __name__ == "__main__":
         if not(('s_' + requestedFunc) in gosFuncList):
             raise Exception('Incorrect Function Argument!')
 
-        getData = {}
-
-        osName = name
-        getData['osName'] = osName
-
-        userPath = path.expanduser('~')
-        userName = path.split(userPath)[-1]
-        getData['userName'] = userName
-
-        getData['usbLabel'] = argv[2]
-        # TODO: check label path if its exists else raise
-
-        getData['stickPath'] = argv[3]
-        # TODO: check stick path if its exists else raise
-
-        if requestedFunc == 'clone' and len(argv) == 5:
-            getData['targetPath'] = argv[4]
-            # TODO: check target path if its exists else raise
-
+        data = getData()
+        
     except Exception as err:
         print(err)
 
@@ -48,7 +52,7 @@ if __name__ == "__main__":
         raise
 
     else:
-        main(requestedFunc, getData)
+        main(requestedFunc, data)
 
     finally:
         print('--END OF LINE--')
