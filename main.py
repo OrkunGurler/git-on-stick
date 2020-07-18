@@ -12,10 +12,8 @@ def getGosFunc(callFunc, data):
     return switcher[callFunc](data)
 
 def main(requestedFunc, data):
-    getGosFunc(requestedFunc, data)
-    return 1
+    return getGosFunc(requestedFunc, data)
     
-
 if __name__ == "__main__":
     try:
         gosFuncList = dir(gos)
