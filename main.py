@@ -1,5 +1,5 @@
 from sys import argv, exc_info
-from os import path, uname, makedirs
+from os import path, uname, makedirs, getcwd
 from gos import s_init, s_clone, s_push, s_pull
 
 #
@@ -43,18 +43,17 @@ def getData():
             raise Exception('Process Terminated By User')
 
     if (requestedFunc == 'clone' or requestedFunc == 'init') and len(argv) == 5:
-        if path.exists(argv[4]):
-            data['targetPath'] = argv[4]
-        else:
+        data['targetPath'] = getcwd() + '/' + argv[4]
+        if not path.exists(argv[4]):
             print('Target Directory Can NOT Found! ' + argv[4])
             response = input('Do you want to create new directory for target path? [Y,n]: ')
             if response.lower() == 'y':
                 makedirs(argv[4])
-                data['targetPath'] = argv[4]
             else:
                 raise Exception('Process Terminated By User')
     else:
-        data['targetPath'] = ''
+        data['targetPath'] = getcwd()
+        print(data['targetPath'])
     
     return data
 
