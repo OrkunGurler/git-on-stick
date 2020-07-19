@@ -8,6 +8,10 @@ from gos import s_init, s_clone, s_push, s_pull
 def getData():
     data = {}
 
+    data['argv'] = argv
+
+    data['requested'] = argv[1]
+
     userPath = path.expanduser('~')
     userName = path.split(userPath)[-1]
     data['userName'] = userName
@@ -75,10 +79,15 @@ def main(requestedFunc, data):
 #
 if __name__ == "__main__":
     try: 
+        argvLen = len(argv)
+        if argvLen == 1:
+            raise Exception('Missing Arguments')
+
         gosFuncList = ['init', 'clone', 'push', 'pull']
         if argv[1] in gosFuncList:
             requestedFunc = argv[1]
-            argvLen = len(argv)
+            if not(requestedFunc == 'push') and argvLen < 4:
+                raise Exception('Missing Arguments')
             if argvLen > 5:
                 raise Exception('Unexpected Argument(s)!')
         else:
