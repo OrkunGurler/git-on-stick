@@ -53,6 +53,8 @@ def getData():
                 data['targetPath'] = argv[4]
             else:
                 raise Exception('Process Terminated By User')
+    else:
+        data['targetPath'] = ''
     
     return data
 
