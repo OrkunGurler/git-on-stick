@@ -2,6 +2,9 @@ from sys import argv, exc_info
 from os import path, uname, makedirs
 from gos import s_init, s_clone, s_push, s_pull
 
+#
+#
+# 
 def getData():
     data = {}
 
@@ -19,7 +22,7 @@ def getData():
             data['usbLabelPath'] = labelPath       
         else:
             raise Exception('USB Label Can NOT Found!')
-    
+
     if not(argv[3][1] == '/'):
         wholeSPath = data['usbLabelPath'] + '/' + argv[3]
     else:
@@ -28,20 +31,19 @@ def getData():
         data['stickPath'] = argv[3]
     else:
         print('Source Directory Can NOT Found! ' + argv[3])
-        response = input('Do you want to create new directory? [Y,n]: ')
+        response = input('Do you want to create new directory for source path? [Y,n]: ')
         if response.lower() == 'y':
             makedirs(wholeSPath)
             data['stickPath'] = argv[3]
         else:
             raise Exception('Process Terminated By User')
 
-
     if (requestedFunc == 'clone' or requestedFunc == 'init') and len(argv) == 5:
         if path.exists(argv[4]):
             data['targetPath'] = argv[4]
         else:
             print('Target Directory Can NOT Found! ' + argv[4])
-            response = input('Do you want to create new directory? [Y,n]: ')
+            response = input('Do you want to create new directory for target path? [Y,n]: ')
             if response.lower() == 'y':
                 makedirs(argv[4])
                 data['targetPath'] = argv[4]
@@ -50,6 +52,9 @@ def getData():
     
     return data
 
+#
+#
+#
 def getGosFunc(callFunc, data):
     switcher = {
         'init': s_init,
@@ -59,14 +64,23 @@ def getGosFunc(callFunc, data):
     }
     return switcher[callFunc](data)
 
+#
+#
+#
 def main(requestedFunc, data):
     return getGosFunc(requestedFunc, data)
 
+#
+#
+#
 if __name__ == "__main__":
-    try:
+    try: 
         gosFuncList = ['init', 'clone', 'push', 'pull']
         if argv[1] in gosFuncList:
             requestedFunc = argv[1]
+            argvLen = len(argv)
+            if argvLen > 5:
+                raise Exception('Unexpected Argument(s)!')
         else:
             raise Exception('Incorrect Function Argument!')
 
@@ -83,7 +97,7 @@ if __name__ == "__main__":
         main(requestedFunc, data)
 
     finally:
-        print('--END OF LINE--')
+        print('\n--END OF LINE--\n')
 
 # gos init USB_LABEL /Repo/Folder [target]
 # gos clone USB_LABEL /Repo/Folder [target]
