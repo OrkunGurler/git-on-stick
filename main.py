@@ -27,20 +27,25 @@ def getData():
         else:
             raise Exception('USB Label Can NOT Found!')
 
-    if not(argv[3][1] == '/'):
-        wholeSPath = data['usbLabelPath'] + '/' + argv[3]
+    if(requestedFunc == 'push' or requestedFunc == 'pull'):
+        data['branch'] = 'master'
+        if(len(argv) == 4):
+            data['branch'] = argv[3]
     else:
-        wholeSPath = data['usbLabelPath'] + argv[3]
-    if path.exists(wholeSPath):
-        data['stickPath'] = argv[3]
-    else:
-        print('Source Directory Can NOT Found! ' + argv[3])
-        response = input('Do you want to create new directory for source path? [Y,n]: ')
-        if response.lower() == 'y':
-            makedirs(wholeSPath)
+        if not(argv[3][1] == '/'):
+            wholeSPath = data['usbLabelPath'] + '/' + argv[3]
+        else:
+            wholeSPath = data['usbLabelPath'] + argv[3]
+        if path.exists(wholeSPath):
             data['stickPath'] = argv[3]
         else:
-            raise Exception('Process Terminated By User')
+            print('Source Directory Can NOT Found! ' + argv[3])
+            response = input('Do you want to create new directory for source path? [Y,n]: ')
+            if response.lower() == 'y':
+                makedirs(wholeSPath)
+                data['stickPath'] = argv[3]
+            else:
+                raise Exception('Process Terminated By User')
 
     if (requestedFunc == 'clone' or requestedFunc == 'init') and len(argv) == 5:
         data['targetPath'] = getcwd() + '/' + argv[4]
@@ -53,8 +58,7 @@ def getData():
                 raise Exception('Process Terminated By User')
     else:
         data['targetPath'] = getcwd()
-        print(data['targetPath'])
-    
+
     return data
 
 #
@@ -95,7 +99,6 @@ if __name__ == "__main__":
             raise Exception('Incorrect Function Argument!')
 
         data = getData()
-        print(data)
     except Exception as err:
         print(err)
 
