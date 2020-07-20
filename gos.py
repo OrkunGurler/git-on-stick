@@ -13,8 +13,9 @@ def s_clone():
     print('hello clone')
     return
 
-def s_push():
-    print('hello push')
+def s_push(data):
+    run(['git', 'push', data["usbLabel"], data["branch"]])
+    
     return
 
 def s_pull():
